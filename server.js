@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());  // For parsing JSON request bodies
 
-const uri = "mongodb+srv://admin:admin123456@capstonecluster.ymc3w.mongodb.net/?retryWrites=true&w=majority&appName=CapstoneCluster";
+const uri = "mongodb+srv://admin:admin123456@capstonecluster.ymc3w.mongodb.net/";
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -31,10 +31,15 @@ async function connectMongoDB() {
 }
 
 // Start the Express server and connect to MongoDB
-app.listen(4000, () => {
-  console.log("Server is running on port 4000");
-  connectMongoDB().catch(console.error);
-});
+connectMongoDB()
+  .then(() => {
+    app.listen(4000, () => {
+      console.log("Server is running on port 4000");
+    });
+  })
+  .catch((error) => {
+    console.error("Failed to start server due to MongoDB connection issue:", error);
+  });
 
 // Routes
 app.use("/api/users", require("./routes/users"));
